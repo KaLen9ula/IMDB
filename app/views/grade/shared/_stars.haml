@@ -1,0 +1,15 @@
+%div{id: "rating_form_#{movie.id}"}
+  - grade = Grade.where(movie: movie, user: current_user).last
+  = simple_form_for Grade.new, url: grade_index_path, html: {id: "rating-#{movie.id}"}, remote: true do |f|
+    = f.hidden_field :movie_id, value: movie.id
+    = f.hidden_field :user_id, value: current_user.id
+    = f.hidden_field :rating, value: grade&.rating
+    .rating{:role => "optgroup"}
+      - if movie_has_grade?(movie, current_user)
+        - (1..grade.rating).each do |star_index|
+          %i.fa.fa-star.rating-star{"id" => "rating-#{star_index}-#{movie.id}", "aria-label" => "Rate as four out of 5 stars", "data-object" => movie.id, "data-rating" => star_index, :role => "radio", :tabindex => "0"}
+        - (grade.rating+1..10).each do |star_index|
+          %i.fa.fa-star-o.rating-star{"id" => "rating-#{star_index}-#{movie.id}", "aria-label" => "Rate as four out of 5 stars", "data-object" => movie.id, "data-rating" => star_index, :role => "radio", :tabindex => "0"}
+      - else
+        - (1..10).each do |star_index|
+          %i.fa.fa-star-o.rating-star{"id" => "rating-#{star_index}-#{movie.id}", "aria-label" => "Rate as four out of 5 stars", "data-object" => movie.id, "data-rating" => star_index, :role => "radio", :tabindex => "0"}

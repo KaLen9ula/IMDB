@@ -1,0 +1,1 @@
+$("#rating_form_<%= @movie.id %>").html("<%= j render(partial: 'grade/shared/stars', locals: {movie: @movie}) %>")

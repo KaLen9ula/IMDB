@@ -1,0 +1,20 @@
+%html
+  %body
+    .container
+      = link_to root_path, class: 'general-back-link' do
+        %i.fa.fa-long-arrow-left.mr-15.mt-5
+        Back to films
+      .row
+        .col-sm-6
+          %h1.text-left.mt-4
+            = @movie.title
+          .d-flex.justify-content-between.mt-3
+            %p.font-weight-bold.lead
+              = "Category: #{@movie.category.name}"
+            %p.lead.big
+              = "Average rating: #{AverageRatingQuery.new(@movie).call}"
+              %i.fa.fa-star.rating-star
+          .general-info-wrap.divider-lg.mt-2
+            %p.lead.big
+              = "Description: #{@movie.description}"
+

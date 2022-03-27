@@ -1,0 +1,51 @@
+.container
+  .row.mt-5
+    .dropdown
+      %button#dropdownMenuButton.btn.btn-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
+        Sort by category
+      .dropdown-menu
+        %a.dropdown-item{href: root_path, class: !params[:category] ? "active" : ""}
+          All
+        - @categories.each do |category|
+          %a.dropdown-item{href: root_path(category: category.id), class: params[:category]&.to_i == category.id ? "active" : ""}
+            = category.name
+  .row
+    - @movies.each do |movie|
+      %div{:style => "display: flex; flex-direction: row; flex-wrap: wrap"}
+        .card{:style => "width: 18rem; margin: 10px"}
+          %blockquote.blockquote.mb-0.card-body
+            %header.blockquote-header.text-right
+              %small
+                = movie.category.name
+            .d-flex.justify-content-center.mt-2{:style => "display: flex; flex-direction: row"}
+              %h5.card-title
+                = movie.title
+            - if user_signed_in?
+              .d-flex.justify-content-center.mt-2
+                = render(partial: 'grade/shared/stars', locals: {movie: movie})
+            %a.btn.btn-primary.d-flex.justify-content-center.mt-2{href: movie_path(movie)}
+              Details
+    .container.d-flex.justify-content-center.mt-2
+      - link = pagy_link_proc(@pagy, link_extra: 'class="page-link"')
+
+      %nav.pagy-bootstrap-nav{"aria-label" => "pager", :role => "navigation"}
+        %ul.pagination
+          - if @pagy.prev
+            %li.page-item.prev!= link.call(@pagy.prev, pagy_t('pagy.nav.prev'), 'aria-label="previous"')
+          - else
+            %li.page-item.prev.disabled
+              %a.page-link{:href => '#'}!= pagy_t('pagy.nav.prev')
+          - @pagy.series.each do |item|                      # series example: [1, :gap, 7, 8, "9", 10, 11, :gap, 36]
+            - if item.is_a?(Integer)                        # page link
+              %li.page-item!= link.call(item)
+            - elsif item.is_a?(String)                      # current page
+              %li.page-item.active!= link.call(item)
+            - elsif item == :gap                            # page gap
+              %li.page-item.disabled.gap
+                %a.page-link{:href => "#"}!= pagy_t('pagy.nav.gap')
+
+          - if @pagy.next
+            %li.page-item.next!= link.call(@pagy.next, pagy_t('pagy.nav.next'), 'aria-label="next"')
+          - else
+            %li.page-item.next.disabled
+              %a.page-link{:href => '#'}!= pagy_t('pagy.nav.next')
